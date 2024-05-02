@@ -1,4 +1,7 @@
 slprj/
 *.slxc
 *.tlc
+*.asv
+*.autosave
+octave_workspace
 reaction_pendulum_RTCON
