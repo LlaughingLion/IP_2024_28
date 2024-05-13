@@ -14,7 +14,7 @@ phi_dot_train = train_raw(:,4);
 iddata_data_train = iddata([theta_train, phi_dot_train], u_train, 0.05);
 
 % Unpack the data and create a iddata struct
-f = load("sysid_data/prbs_neg_3_ext.mat");
+f = load("sysid_data/prbs_rand_1.mat");
 
 val_raw = f.data(0/h+1:end,:);
 t_val = val_raw(:,1);
@@ -45,7 +45,7 @@ sys.Structure.Parameters(5).Free = false;
 sys_est = greyest(iddata_data_train, sys)
 
 % Compare identified system with training data
-[simdata_train, ~, x_train, ~] = lsim(sys_est, u_train, t_train);
+[simdata_train, ~, x_train] = lsim(sys_est, u_train, t_train);
 x0_val = [theta_val(1), x_train(end, 2), phi_dot_val(1)];
 x0_val = [0,0,0];
 simdata_val = lsim(sys_est, u_val, t_val, x0_val);
@@ -79,6 +79,12 @@ alpha_4 = pars(5);
 covs = getcov(sys_est);
 save("params/sysid_results.mat", 'beta', 'alpha_1', 'alpha_2', 'alpha_3', 'alpha_4', 'covs');
 
+
+A = sys_est.A;
+B = sys_est.B;
+C = sys_est.C;
+D = sys_est.D;
+save("params/sysid_matrices.mat", 'A', "B", "C", "D");
 
 
 
