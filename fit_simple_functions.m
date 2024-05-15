@@ -6,7 +6,7 @@ inputVals = [-8, -6, -4, -2, 2, 4, 6, 8]';
 alpha_1_results = zeros(size(inputVals));
 alpha_1_std_results = zeros(size(inputVals));
 for i = 1:length(inputVals)
-    dataPath = "cut_data/disk_test_" + inputVals(i) + ".mat";
+    dataPath = "cut_data_cal/disk_test_" + inputVals(i) + ".mat";
     [alpha_1_results(i), alpha_1_std_results(i)] = fitDiskDecay(dataPath, false);
 end
 
@@ -25,7 +25,7 @@ inputVals = [-8, -6, -4, -2, 2, 4, 6, 8]';
 alpha_2_results = zeros(size(inputVals));
 alpha_2_std_results = zeros(size(inputVals));
 for i = 1:length(inputVals)
-    dataPath = "cut_data/disk_test_up_" + inputVals(i) + ".mat";
+    dataPath = "cut_data_cal/disk_test_up_" + inputVals(i) + ".mat";
     [alpha_2_results(i), alpha_2_std_results(i)] = fitDiskWindUp(dataPath, alpha_1, false);
 end
 
@@ -46,7 +46,7 @@ alpha_3_std_results = zeros(size(inputVals));
 alpha_4_results = zeros(size(inputVals));
 alpha_4_std_results = zeros(size(inputVals));
 for i = 1:length(inputVals)
-    dataPath = "cut_data/pend_test_" + inputVals(i) + ".mat";
+    dataPath = "cut_data_cal/pend_test_" + inputVals(i) + ".mat";
     [alpha_3_results(i), alpha_3_std_results(i), alpha_4_results(i), alpha_4_std_results(i)] = fitPendulumSwing(dataPath, true);
 end
 
@@ -69,8 +69,8 @@ fprintf("Average: " + alpha_4 + "     std: \n\n");
 
 
 % Save all params in a .mat file
-%simple_estimate_alphas = [alpha_1, alpha_2, alpha_3, alpha_4]';
-%save("params/simple_estimate_alphas.mat", "simple_estimate_alphas");
+simple_estimate_alphas = [alpha_1, alpha_2, alpha_3, alpha_4]';
+save("params/simple_estimate_alphas_v2.mat", "simple_estimate_alphas");
 
 
 
@@ -140,8 +140,8 @@ function [alpha_3, alpha_3_std, alpha_4, alpha_4_std] = fitPendulumSwing(dataPat
     t_full = data.cut_data(:,1) - data.cut_data(1,1);
     theta_full = data.cut_data(:,3);
 
-    t = t_full(1:end);
-    theta = theta_full(1:end);
+    t = t_full(20:end);
+    theta = theta_full(20:end);
 
     % Fit the function parameters
     fitfun = fittype(@(beta, omega_star, A, d, x) exp(-beta * x) .* (A * sin(omega_star * x - d)));

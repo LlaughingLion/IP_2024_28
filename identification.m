@@ -3,7 +3,7 @@ clc; clear; close all;
 h = 0.05;
 
 % Unpack the data and create a iddata struct
-f = load("sysid_data/prbs_pos_2_long.mat");
+f = load("sysid_data_cal/prbs_pos_2_long.mat");
 
 % Split training and validation data
 train_raw = f.data(6/h+1:80/h+1,:);
@@ -14,9 +14,10 @@ phi_dot_train = train_raw(:,4);
 iddata_data_train = iddata([theta_train, phi_dot_train], u_train, 0.05);
 
 % Unpack the data and create a iddata struct
-f = load("sysid_data/prbs_rand_1.mat");
+f = load("sysid_data_cal/prbs_rand_0_25.mat");
 
-val_raw = f.data(0/h+1:end,:);
+Tend = 95;
+val_raw = f.data(0/h+1:Tend/h,:);
 t_val = val_raw(:,1);
 u_val = val_raw(:,2);
 theta_val = val_raw(:,3);
@@ -24,7 +25,7 @@ phi_dot_val = val_raw(:,4);
 iddata_data_val = iddata([theta_val, phi_dot_val], u_val, 0.05);
 
 % Load estimated parameters
-f = load("params/simple_estimate_alphas.mat");
+f = load("params/simple_estimate_alphas_v2.mat");
 param_init = f.simple_estimate_alphas();
 a1 = param_init(1);
 a2 = param_init(2);
@@ -77,14 +78,14 @@ alpha_2 = pars(3);
 alpha_3 = pars(4);
 alpha_4 = pars(5);
 covs = getcov(sys_est);
-save("params/sysid_results.mat", 'beta', 'alpha_1', 'alpha_2', 'alpha_3', 'alpha_4', 'covs');
+save("params/sysid_results_v2.mat", 'beta', 'alpha_1', 'alpha_2', 'alpha_3', 'alpha_4', 'covs');
 
 
 A = sys_est.A;
 B = sys_est.B;
 C = sys_est.C;
 D = sys_est.D;
-save("params/sysid_matrices.mat", 'A', "B", "C", "D");
+save("params/sysid_matrices_v2.mat", 'A', "B", "C", "D");
 
 
 
