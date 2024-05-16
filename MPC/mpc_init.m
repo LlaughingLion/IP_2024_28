@@ -30,7 +30,7 @@ obs_poles = [0.6, 0.7, 0.8];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Load system and discretize
-f = load("params/sysid_matrices_v1.mat");
+f = load("params/sysid_matrices_v2.mat");
 sys_cont = ss([-f.A(:,1), f.A(:,2:3)], f.B, f.C, f.D);
 System = c2d(sys_cont, h, 'zoh');
 Phi = System.A; Gamma = System.B;
@@ -87,7 +87,7 @@ f = S' * Qbar * T;
 L = place(System.A', System.C', obs_poles)';
 A_obs = System.A - L * System.C;
 B_obs = [System.B, L];
-C_obs = eye(nx);
+C_obs = diag([0.5, 1, 1]);
 D_obs = zeros(nx, nu + ny);
 LBGobs = ss(A_obs, B_obs, C_obs, D_obs, h);
 
