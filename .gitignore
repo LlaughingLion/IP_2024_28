@@ -4,4 +4,4 @@ slprj/
 *.asv
 *.autosave
 octave_workspace
-reaction_pendulum_RTCON
+*_RTCON

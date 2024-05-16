@@ -16,7 +16,7 @@ iddata_data_train = iddata([theta_train, phi_dot_train], u_train, 0.05);
 % Unpack the data and create a iddata struct
 f = load("sysid_data_cal/prbs_rand_0_25.mat");
 
-Tend = 95;
+Tend = 120;
 val_raw = f.data(0/h+1:Tend/h,:);
 t_val = val_raw(:,1);
 u_val = val_raw(:,2);
@@ -78,14 +78,14 @@ alpha_2 = pars(3);
 alpha_3 = pars(4);
 alpha_4 = pars(5);
 covs = getcov(sys_est);
-save("params/sysid_results_v2.mat", 'beta', 'alpha_1', 'alpha_2', 'alpha_3', 'alpha_4', 'covs');
+%save("params/sysid_results_v2.mat", 'beta', 'alpha_1', 'alpha_2', 'alpha_3', 'alpha_4', 'covs');
 
 
 A = sys_est.A;
 B = sys_est.B;
 C = sys_est.C;
 D = sys_est.D;
-save("params/sysid_matrices_v2.mat", 'A', "B", "C", "D");
+%save("params/sysid_matrices_v2.mat", 'A', "B", "C", "D");
 
 
 
