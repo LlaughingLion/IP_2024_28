@@ -13,17 +13,15 @@ h = 0.05;
 Nhor = 20;
 
 % LQR cost functions
-Q = diag([100,0.01,0.01]);
-R = 0.01;
+Q = diag([100, 0.1, 0.0001]);
+R = 2;
 
 % State and input boundaries
 xlim = [-0.25, 0.25;    % theta
-        -1000, 1000;    % theta_dot
-        -1000, 1000];   % phi_dot
+        -10, 10;        % theta_dot
+        -300, 300];     % phi_dot
 ulim = [-1, 1];         % u
 
-% Luenberger observer 
-obs_poles = [0.6, 0.7, 0.8];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Offline Calculations
@@ -32,6 +30,7 @@ obs_poles = [0.6, 0.7, 0.8];
 % Load system and discretize
 f = load("params/sysid_matrices_v2.mat");
 sys_cont = ss([-f.A(:,1), f.A(:,2:3)], f.B, f.C, f.D);
+%sys_cont = ss(f.A, f.B, f.C, f.D);
 System = c2d(sys_cont, h, 'zoh');
 Phi = System.A; Gamma = System.B;
 
@@ -82,14 +81,6 @@ H = S' * Qbar * S + Rbar;
 H = (H + H')/2;
 f = S' * Qbar * T;
 
-% Luenberger observer 
-[ny, ~] = size(System.C);
-L = place(System.A', System.C', obs_poles)';
-A_obs = System.A - L * System.C;
-B_obs = [System.B, L];
-C_obs = diag([0.5, 1, 1]);
-D_obs = zeros(nx, nu + ny);
-LBGobs = ss(A_obs, B_obs, C_obs, D_obs, h);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Pack everything in structs
