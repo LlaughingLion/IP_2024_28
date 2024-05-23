@@ -10,16 +10,16 @@ clc; clear; close all;
 h = 0.05;
 
 % Prediction horizon
-Nhor = 20;
+Nhor = 40;
 
 % LQR cost functions
 Q = diag([100, 0.1, 0.0001]);
 R = 2;
 
 % State and input boundaries
-xlim = [-0.25, 0.25;    % theta
+xlim = [-0.35, 0.35;    % theta
         -10, 10;        % theta_dot
-        -300, 300];     % phi_dot
+        -400, 400];     % phi_dot
 ulim = [-1, 1];         % u
 
 
