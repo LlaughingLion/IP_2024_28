@@ -5,18 +5,20 @@ clc; clear; close all;
 inputVals = [-8, -6, -4, -2, 2, 4, 6, 8]';
 alpha_1_results = zeros(size(inputVals));
 alpha_1_std_results = zeros(size(inputVals));
+doPlot = [0,0,0,0,0,0,1,0];
 for i = 1:length(inputVals)
-    dataPath = "cut_data_cal/disk_test_" + inputVals(i) + ".mat";
-    [alpha_1_results(i), alpha_1_std_results(i)] = fitDiskDecay(dataPath, false);
+    dataPath = "0 - Data/cut_data_cal/disk_test_" + inputVals(i) + ".mat";
+    [alpha_1_results(i), alpha_1_std_results(i)] = fitDiskDecay(dataPath, doPlot(i));
 end
 
 % Weighted average
 alpha_1 = weightedAverage(alpha_1_results, 1./alpha_1_std_results);
+alpha_1_std = std(alpha_1_results);
 
 % Display output
 disp("=== alpha_1 ==="); disp(["value", "std"]);
 disp([alpha_1_results, alpha_1_std_results]);
-fprintf("Average: " + alpha_1 + "     std: \n\n");
+fprintf("Average: " + alpha_1 + "     std: " + alpha_1_std + " (" + round(alpha_1_std/alpha_1*100, 1) + " perc)\n\n");
 
 
 
@@ -24,18 +26,20 @@ fprintf("Average: " + alpha_1 + "     std: \n\n");
 inputVals = [-8, -6, -4, -2, 2, 4, 6, 8]';
 alpha_2_results = zeros(size(inputVals));
 alpha_2_std_results = zeros(size(inputVals));
+doPlot = [0,0,0,0,0,0,1,0];
 for i = 1:length(inputVals)
-    dataPath = "cut_data_cal/disk_test_up_" + inputVals(i) + ".mat";
-    [alpha_2_results(i), alpha_2_std_results(i)] = fitDiskWindUp(dataPath, alpha_1, false);
+    dataPath = "0 - Data/cut_data_cal/disk_test_up_" + inputVals(i) + ".mat";
+    [alpha_2_results(i), alpha_2_std_results(i)] = fitDiskWindUp(dataPath, alpha_1, doPlot(i));
 end
 
 % Weighted average
 alpha_2 = weightedAverage(alpha_2_results, 1./alpha_2_std_results);
+alpha_2_std = std(alpha_2_results);
 
 % Display output
 disp("=== alpha_2 ==="); disp(["value", "std"]);
 disp([alpha_2_results, alpha_2_std_results]);
-fprintf("Average: " + alpha_2 + "     std: \n\n");
+fprintf("Average: " + alpha_2 + "     std: " + alpha_2_std + " (" + round(alpha_2_std/alpha_2*100, 1) + " perc)\n\n");
 
 
 
@@ -46,31 +50,33 @@ alpha_3_std_results = zeros(size(inputVals));
 alpha_4_results = zeros(size(inputVals));
 alpha_4_std_results = zeros(size(inputVals));
 for i = 1:length(inputVals)
-    dataPath = "cut_data_cal/pend_test_" + inputVals(i) + ".mat";
-    [alpha_3_results(i), alpha_3_std_results(i), alpha_4_results(i), alpha_4_std_results(i)] = fitPendulumSwing(dataPath, true);
+    dataPath = "0 - Data/cut_data_cal/pend_test_" + inputVals(i) + ".mat";
+    [alpha_3_results(i), alpha_3_std_results(i), alpha_4_results(i), alpha_4_std_results(i)] = fitPendulumSwing(dataPath, false);
 end
 
 % Weighted average
 alpha_3 = weightedAverage(alpha_3_results, 1./alpha_3_std_results);
+alpha_3_std = std(alpha_3_results);
 
 % Display output
 disp("=== alpha_3 ==="); disp(["value", "std"]);
 disp([alpha_3_results, alpha_3_std_results]);
-fprintf("Average: " + alpha_3 + "     std: \n\n");
+fprintf("Average: " + alpha_3 + "     std: " + alpha_3_std + " (" + round(alpha_3_std/alpha_3*100, 1) + " perc)\n\n");
 
 % Weighted average
 alpha_4 = weightedAverage(alpha_4_results, 1./alpha_4_std_results);
+alpha_4_std = std(alpha_4_results);
 
 % Display output
 disp("=== alpha_4 ==="); disp(["value", "std"]);
 disp([alpha_4_results, alpha_4_std_results]);
-fprintf("Average: " + alpha_4 + "     std: \n\n");
+fprintf("Average: " + alpha_4 + "     std: " + alpha_4_std + " (" + round(alpha_4_std/alpha_4*100, 1) + " perc)\n\n");
 
 
 
 % Save all params in a .mat file
 simple_estimate_alphas = [alpha_1, alpha_2, alpha_3, alpha_4]';
-save("params/simple_estimate_alphas_v2.mat", "simple_estimate_alphas");
+%save("params/simple_estimate_alphas_v2.mat", "simple_estimate_alphas");
 
 
 
@@ -100,9 +106,16 @@ function [alpha_1, alpha_1_std] = fitDiskDecay(dataPath, doPlot)
 
     % Plot if desired
     if doPlot
-        figure(); hold on;
+        figure('Position', [10, 10, 810, 310]); hold on;
         scatter(t, phi_dot, 'b+');
         plot(fitted_curve, 'predobs');
+        yline(0, ":");
+        xlabel("$t$ (s)", "Interpreter","latex", "FontSize", 13);
+        ylabel("$\dot{\phi}$ (rad/s)", "Interpreter","latex", "FontSize", 13);
+        title("Fit of $C\exp (\alpha_1 t)$ on data", "Interpreter", "latex", "FontSize", 13);
+        legend(["Data", "Fit", "Error bounds"]);
+        tightfig;
+        saveas(gcf, "0 - Figures/" + "fit_alpha1" + ".pdf");
     end
 end
 
@@ -127,9 +140,16 @@ function [alpha_2, alpha_2_std] = fitDiskWindUp(dataPath, alpha_1, doPlot)
 
     % Plot if desired
     if doPlot
-        figure(); hold on;
+        figure('Position', [10, 10, 810, 310]); hold on;
         scatter(t, phi_dot, 'b+');
         plot(fitted_curve, 'predobs');
+        yline(0, ":");
+        xlabel("$t$ (s)", "Interpreter","latex", "FontSize", 13);
+        ylabel("$\dot{\phi}$ (rad/s)", "Interpreter","latex", "FontSize", 13);
+        title("Fit of $\frac{\alpha_2}{\alpha_1} u + C\exp (\alpha_1 t)$ on data", "Interpreter", "latex", "FontSize", 13);
+        legend(["Data", "Fit", "Error bounds"]);
+        tightfig;
+        saveas(gcf, "0 - Figures/" + "fit_alpha2" + ".pdf");
     end
 end
 
