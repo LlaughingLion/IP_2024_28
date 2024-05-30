@@ -49,9 +49,10 @@ alpha_3_results = zeros(size(inputVals));
 alpha_3_std_results = zeros(size(inputVals));
 alpha_4_results = zeros(size(inputVals));
 alpha_4_std_results = zeros(size(inputVals));
+doPlot = [0,0,1,0,0,0,0,0];
 for i = 1:length(inputVals)
     dataPath = "0 - Data/cut_data_cal/pend_test_" + inputVals(i) + ".mat";
-    [alpha_3_results(i), alpha_3_std_results(i), alpha_4_results(i), alpha_4_std_results(i)] = fitPendulumSwing(dataPath, false);
+    [alpha_3_results(i), alpha_3_std_results(i), alpha_4_results(i), alpha_4_std_results(i)] = fitPendulumSwing(dataPath, doPlot(i));
 end
 
 % Weighted average
@@ -160,7 +161,7 @@ function [alpha_3, alpha_3_std, alpha_4, alpha_4_std] = fitPendulumSwing(dataPat
     t_full = data.cut_data(:,1) - data.cut_data(1,1);
     theta_full = data.cut_data(:,3);
 
-    t = t_full(20:end);
+    t = t_full(20:end) - t_full(20);
     theta = theta_full(20:end);
 
     % Fit the function parameters
@@ -184,9 +185,16 @@ function [alpha_3, alpha_3_std, alpha_4, alpha_4_std] = fitPendulumSwing(dataPat
 
     % Plot if desired
     if doPlot
-        figure(); hold on;
-        scatter(t_full, theta_full, 'b+');
+        figure('Position', [10, 10, 810, 310]); hold on;
+        scatter(t, theta, 'b+');
         plot(fitted_curve, 'predobs');
+        yline(0, ":");
+        xlabel("$t$ (s)", "Interpreter","latex", "FontSize", 13);
+        ylabel("$\theta$ (rad)", "Interpreter","latex", "FontSize", 13);
+        title("Fit of $A\exp (-\beta t)\sin(\omega_0 t - d)$ on data", "Interpreter", "latex", "FontSize", 13);
+        legend(["Data", "Fit", "Error bounds"]);
+        tightfig;
+        saveas(gcf, "0 - Figures/" + "fit_alpha34" + ".pdf");
     end
 end
 
