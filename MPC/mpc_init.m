@@ -1,6 +1,5 @@
 % Initialization script that defines and computes all variables necessary
 % for MPC, and stores them in the workspace
-clc; clear; close all;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Parameters
@@ -10,7 +9,7 @@ clc; clear; close all;
 h = 0.05;
 
 % Prediction horizon
-Nhor = 40;
+Nhor = 5;
 
 % LQR cost functions
 Q = diag([100, 0.1, 0.0001]);
