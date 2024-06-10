@@ -24,7 +24,7 @@ class Neural_network(nn.Module): # inherit the nn.Module class for backpropagati
         x = self.fc1(x) 
         x = self.tanh(x) 
         x = self.fc2(x)
-        x = self.relu(x)
+        x = self.tanh(x)
         x = self.fc3(x)
         x = self.tanh(x)
         x = self.fc4(x)
