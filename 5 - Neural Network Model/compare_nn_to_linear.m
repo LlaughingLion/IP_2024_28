@@ -3,7 +3,7 @@ clear; clc; close all;
 % Raw data
 data = load("0 - Data\sysid_closed_loop\20sec.mat");
 ignoreSteps = 10;
-Tend = 45;
+Tend = 300;
 t = data.t(ignoreSteps:Tend/0.05,:);
 u = reshape(data.u(:,:,ignoreSteps:Tend/0.05), length(t), 1);
 y = data.y(ignoreSteps:Tend/0.05,:);
@@ -16,8 +16,8 @@ simdata = lsim(System, u, t, y(1,1:3));
 
 
 % Neural Network
-net = importONNXNetwork("5 - Neural Network Model\Models\10sec.onnx","InputDataFormats",{'BC'},"OutputDataFormats",{'BC'});
-%analyzeNetwork(net);
+net = importONNXNetwork("5 - Neural Network Model\Models\10sec_norelu.onnx","InputDataFormats",{'BC'},"OutputDataFormats",{'BC'});
+analyzeNetwork(net);
 
 inputData = [u,y(:,1:3)];
 outputData = zeros([size(inputData, 1), 3]);
