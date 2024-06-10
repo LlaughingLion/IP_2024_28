@@ -2,65 +2,70 @@ clc; clear; close all;
 
 h = 0.05;
 
+% Split training and validation data
+data = load("0 - Data\sysid_closed_loop\20sec.mat");
+ignoreSteps = 1/h;
+Tend = 6000*h;
+t_train = data.t(ignoreSteps:Tend/0.05,:);
+u_train = reshape(data.u(:,:,ignoreSteps:Tend/0.05), length(t_train), 1);
+y_train = data.y(ignoreSteps:Tend/0.05,:);
+theta_train = y_train(:,1);
+theta_dot_train = y_train(:,2);
+phi_dot_train = y_train(:,3);
+iddata_data_train = iddata([theta_train, phi_dot_train], u_train, h);
+
 % Unpack the data and create a iddata struct
-f = load("0 - Data/sysid_data_cal/prbs_pos_2_long.mat");
 
 % Split training and validation data
-train_raw = f.data(6/h+1:80/h+1,:);
-t_train = train_raw(:,1)-5;
-u_train = train_raw(:,2);
-theta_train = train_raw(:,3);
-phi_dot_train = train_raw(:,4);
-iddata_data_train = iddata([theta_train, phi_dot_train], u_train, 0.05,'Name','Two tanks');
-
-% Unpack the data and create a iddata struct
-f = load("0 - Data/sysid_data_cal/prbs_rand_0_25.mat");
-
-Tend = 120;
-val_raw = f.data(6/h+1:Tend/h,:);
-t_val = val_raw(:,1)-6;
-u_val = val_raw(:,2);
-theta_val = val_raw(:,3);
-phi_dot_val = val_raw(:,4);
-iddata_data_val = iddata([theta_val, phi_dot_val], u_val, 0.05);
+data = load("0 - Data\sysid_closed_loop\10sec.mat");
+ignoreSteps = 2.5/h;
+Tend = 6000*h;
+t_val = data.t(ignoreSteps:Tend/0.05,:);
+u_val = reshape(data.u(:,:,ignoreSteps:Tend/0.05), length(t_val), 1);
+y_val = data.y(ignoreSteps:Tend/0.05,:);
+theta_val = y_val(:,1);
+theta_dot_val = y_val(:,2);
+phi_dot_val = y_val(:,3);
+iddata_data_val = iddata([theta_val, phi_dot_val], u_val, h);
 
 
-Order = [2 1 3];
+% Load estimated parameters
+
 f = load("params/sysid_results_v2.mat");
-a1 = f.alpha_1;
-a2 = f.alpha_2;
-a3 = f.alpha_3;
-a4 = f.alpha_4;
+a1 = 0;
+a2 = 1;
+a3 = 0;
+a4 = -f.alpha_4/(f.beta-1);
+a5 = f.alpha_3/(f.beta-1); 
+a6 = -f.alpha_1*f.beta/(f.beta-1);
+a7 = f.alpha_4/(f.beta-1);
+a8 = -f.alpha_3/(f.beta-1);
+a9 = -f.alpha_1/(f.beta-1);
+b1 = 0;
+b2 = f.alpha_2*f.beta/(f.beta-1);
+b3 = -f.alpha_2/(f.beta-1);
 
-% Define guess for beta
-b0 = f.beta;
-c1 = 4;
-c2 = 50;
 
-Parameters = {a1;a2;a3;a4;b0;c1;c2};
+parameters =  {'c_a1',a1;'c_a2',a2;'c_a3',a3;'c_a4',a4;'c_a5',a5;'c_a6',a6;'c_a7',a7;'c_a8',a8;'c_a9',a9;'c_b1',b1;'c_b2',b2;'c_b3',b3;};
 
+f = load("params/sysid_matrices_v2.mat");
+sys_cont = ss([-f.A(:,1), f.A(:,2:3)], f.B, f.C, f.D);
 
-InitialStates = [0; 0; 0];
+% Do the identification
+sys = idgrey(@flywheelpendfcn, parameters, 'c');
 
-Ts = 0;
+for i = 1:12
+    sys.Structure.Parameters(i).Free = true;
+end
 
-nlgr = idnlgrey('flywheelpend_nl',Order, Parameters,InitialStates,Ts,Name="Two tanks");
+sys_est = greyest(iddata_data_train, sys)
 
-nlgr.Parameters(1).Fixed = true;
-nlgr.Parameters(2).Fixed = true;
-nlgr.Parameters(4).Fixed = true;
-
-opt = nlgreyestOptions;
-opt.SearchMethod = 'gna';
-opt.OutputWeight = diag([2,1]);
-sys_est = nlgreyest(iddata_data_train, nlgr,opt);
-[a1_n,a2_n,a3_n,a4_n,b_n,c1_n,c2_n] = sys_est.Parameters.Value;
 
 % Compare identified system with training data
 x0_val = zeros([3,1]);
-[simdata_train, ~, x_train] = sim(sys_est, u_train);
+[simdata_train, ~, x_train] = lsim(sys_est, u_train, t_train,x0_val);
 x0_val = zeros([3,1]);
-simdata_val = sim(sys_est, u_val);
+simdata_val = lsim(sys_est, u_val, t_val, x0_val);
 
 GOF_train = 100 * (1-goodnessOfFit(simdata_train, [theta_train,phi_dot_train], 'NRMSE'))
 GOF_val = 100 * (1-goodnessOfFit(simdata_val, [theta_val,phi_dot_val], 'NRMSE'))
@@ -118,7 +123,11 @@ sgtitle("Training data and model prediction")
 %save("params/sysid_results_v2.mat", 'beta', 'alpha_1', 'alpha_2', 'alpha_3', 'alpha_4', 'covs');
 
 
-
+A = sys_est.A;
+B = sys_est.B;
+C = sys_est.C;
+D = sys_est.D;
+save("params/subspace_ID.mat", 'A', "B", "C", "D");
 
 
 
@@ -127,3 +136,19 @@ sgtitle("Training data and model prediction")
 %   FUNCTIONS
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [A, B, C, D] = flywheelpendfcn(a1,a2,a3,a4,a5,a6,a7,a8,a9,b1,b2,b3,x0,Ts)
+
+    A = [a1,a2,a3;
+        a4,a5,a6;
+        a7,a8,a9
+        ];
+    B = [b1;
+        b2;
+        b3];
+    C = [1, 0, 0;
+        0, 0, 1];
+    D = zeros(2,1);
+
+   
+end
