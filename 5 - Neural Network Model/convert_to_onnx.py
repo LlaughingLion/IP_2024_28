@@ -26,7 +26,6 @@ model = onnx.load("Models/10sec_norelu.onnx")
 
 model.ir_version = 7
 target_opset = 13
-converted_model = version_converter.convert_version(model, 14)
 converted_model = version_converter.convert_version(model, target_opset)
 
 checker.check_model(converted_model)
