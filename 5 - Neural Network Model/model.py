@@ -7,10 +7,10 @@ class Neural_network(nn.Module): # inherit the nn.Module class for backpropagati
     #Build the layers of the network, and initializes the parameters
     def __init__(self): 
         super(Neural_network, self).__init__()
-        self.fc1 = nn.Linear(4, 16, bias = True)
-        self.fc2 = nn.Linear(16, 64, bias = True) 
-        self.fc3 = nn.Linear(64, 128, bias = True) 
-        self.fc4 = nn.Linear(128, 3, bias = True)
+        self.fc1 = nn.Linear(4, 8, bias = True)
+        self.fc2 = nn.Linear(8, 16, bias = True) 
+        self.fc3 = nn.Linear(16, 64, bias = True) 
+        self.fc4 = nn.Linear(64, 3, bias = True)
 
         self.tanh = F.tanh
         self.sigmoid = F.sigmoid
