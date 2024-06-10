@@ -3,7 +3,7 @@ clc; clear; close all;
 h = 0.05;
 
 % Unpack the data and create a iddata struct
-f = load("sysid_data_cal/prbs_pos_2_long.mat");
+f = load("0 - Data/sysid_data_cal/prbs_pos_2_long.mat");
 
 % Split training and validation data
 train_raw = f.data(6/h+1:80/h+1,:);
@@ -14,7 +14,7 @@ phi_dot_train = train_raw(:,4);
 iddata_data_train = iddata([theta_train, phi_dot_train], u_train, 0.05);
 
 % Unpack the data and create a iddata struct
-f = load("sysid_data_cal/prbs_rand_0_25.mat");
+f = load("0 - Data/sysid_data_cal/prbs_rand_0_25.mat");
 
 Tend = 120;
 val_raw = f.data(6/h+1:Tend/h,:);
@@ -25,7 +25,7 @@ phi_dot_val = val_raw(:,4);
 iddata_data_val = iddata([theta_val, phi_dot_val], u_val, 0.05);
 
 % Unpack the data and create a second iddata struct
-f = load("sysid_data_cal/chirp_1.mat");
+f = load("0 - Data/sysid_data_cal/chirp_1.mat");
 
 Tend = 40;
 val_raw = f.data(0/h+1:Tend/h,:);
@@ -57,10 +57,12 @@ sys.Structure.Parameters(5).Free = false;
 sys_est = greyest(iddata_data_train, sys)
 
 % Compare identified system with training data
-[simdata_train, ~, x_train] = lsim(sys_est, u_train, t_train);
-x0_val = [theta_val(1), x_train(end, 2), phi_dot_val(1)];
-x0_val = [0,0,0];
+x0_val = [theta_train(1),0, phi_dot_train(1)]
+[simdata_train, ~, x_train] = lsim(sys_est, u_train, t_train,x0_val);
+x0_val = [theta_val(1),0, phi_dot_val(1)];
 simdata_val = lsim(sys_est, u_val, t_val, x0_val);
+
+x0_val = [theta_val2(1),0, phi_dot_val2(1)];
 simdata_val2 = lsim(sys_est, u_val2,t_val2,x0_val);
 
 GOF_train = 100 * (1-goodnessOfFit(simdata_train, [theta_train, phi_dot_train], 'NRMSE'))
@@ -106,7 +108,7 @@ ylabel('$\dot \phi$ (rad)', "Interpreter","latex","FontSize",15)
 legend("Validation data", "Simulation data","Location","northwest","Orientation",	"horizontal","FontSize",6)
 
 sgtitle("PRBS validation data and model prediction")
-exportgraphics(gcf,'0-Figures\PRBS validation data and model prediction.pdf')
+exportgraphics(gcf,'0 - Figures Coen\PRBS validation data and model prediction.pdf')
 
 figure(); 
 subplot(2,1,1); hold on;
@@ -124,7 +126,7 @@ ylabel('$\dot \phi$ (rad)', "Interpreter","latex","FontSize",15)
 legend("Validation data", "Simulation data","Location","northwest","Orientation",	"horizontal","FontSize",6)
 
 sgtitle("Chirp validation data and model prediction")
-exportgraphics(gcf,'0-Figures\Chirp validation data and model prediction.pdf')
+exportgraphics(gcf,'0 - Figures Coen\Chirp validation data and model prediction.pdf')
 
 
 % Format the results and save them
