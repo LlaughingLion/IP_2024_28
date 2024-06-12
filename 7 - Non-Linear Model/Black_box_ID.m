@@ -34,10 +34,11 @@ a4 = f.alpha_4;
 
 % Define guess for beta
 b0 = f.beta;
-c1 = 4;
-c2 = 50;
+c1 = -0.3;
+c2 = 5;
+c3 = -10;
 
-Parameters = {a1;a2;a3;a4;b0;c1;c2};
+Parameters = {a1;a2;a3;a4;b0;c1;c2;c3};
 
 
 InitialStates = [0; 0; 0];
@@ -50,11 +51,11 @@ nlgr.Parameters(1).Fixed = true;
 nlgr.Parameters(2).Fixed = true;
 nlgr.Parameters(4).Fixed = true;
 
+
 opt = nlgreyestOptions;
 opt.SearchMethod = 'gna';
-opt.OutputWeight = diag([2,1]);
 sys_est = nlgreyest(iddata_data_train, nlgr,opt);
-[a1_n,a2_n,a3_n,a4_n,b_n,c1_n,c2_n] = sys_est.Parameters.Value;
+[a1_n,a2_n,a3_n,a4_n,b_n,c1_n,c2_n,c3_n] = sys_est.Parameters.Value;
 
 % Compare identified system with training data
 x0_val = zeros([3,1]);
