@@ -4,4 +4,4 @@ u = data_u.Data;
 y = data_y.Data;
 xhat = data_xhat.Data;
 
-save("0 - Data/sysid_closed_loop/10sec.mat", "t", "u", "y", "xhat");
+save("0 - Data/NLMPC/samp01pred2cont2.mat", "t", "u", "y", "xhat");

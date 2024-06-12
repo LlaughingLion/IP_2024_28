@@ -1,9 +1,9 @@
 clc; clear; close all;
-data = load("0 - Data\control_data\MPC_8.mat");
+data = load("0 - Data\NLMPC\hor2.mat");
 h = 0.05;
 
 tstart = 0.55;
-T = 60;
+T = 7;
 
 t = data.t(tstart/h+1:(tstart+T)/h) - data.t(tstart/h+1);
 theta = data.y(tstart/h+1:(tstart+T)/h,1);
