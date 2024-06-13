@@ -3,5 +3,6 @@ t = data_u.Time;
 u = data_u.Data;
 y = data_y.Data;
 xhat = data_xhat.Data;
+raw_theta = data_raw_theta.Data;
 
-save("0 - Data/NLMPC/samp01pred2cont2.mat", "t", "u", "y", "xhat");
+save("0 - Data/Swingup/swingup4.mat", "t", "u", "y", "xhat", "raw_theta");

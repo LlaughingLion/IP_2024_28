@@ -22,8 +22,8 @@ xlim = [-0.35, 0.35;    % theta
 ulim = [-1, 1];         % u
 
 % Swingup Params
-swingup_max = 1;
-friction_compensation = 1.1;
+swingup_max = 0.8;
+friction_compensation = 1.2;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Offline Calculations
