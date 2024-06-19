@@ -24,3 +24,10 @@ System_sim = c2d(sys_sim, h, 'zoh');
 % LQR Gain
 K = -dlqr(System.A, System.B, Q, R, []);
 %K = -dlqr(System_delayed.A, System_delayed.B, blkdiag(Q, 0), R, []);
+
+% Plotting the Pole zero map of the LQR controlled system
+
+LQR_contr_sys = ss(System.A+System.B*K,System.B,System.C,System.D,h);
+figure();
+pzmap(LQR_contr_sys);
+saveas(gcf, "0 - Figures Coen/" + "Discrete_pzmap_LQR" + ".png");
