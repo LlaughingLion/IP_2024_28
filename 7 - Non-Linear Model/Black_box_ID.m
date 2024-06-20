@@ -84,28 +84,28 @@ xlabel('$t$ (s)', "Interpreter","latex","FontSize",15);
 ylabel('$\dot \phi$ (rad)', "Interpreter","latex","FontSize",15)
 legend("Training data", "Simulation data","Location","northwest","Orientation",	"horizontal","FontSize",6)
 sgtitle("Training data and model prediction")
-% exportgraphics(gcf,'0-Figures\Training data and model prediction.pdf') 
-% % saveas(gcf,'0-Figures\Training data and model prediction.pdf')
+exportgraphics(gcf,'0 - Figures Liam\nonlinear_greyest_training.pdf') 
+% saveas(gcf,'0-Figures\Training data and model prediction.pdf')
 
-% figure(); 
-% subplot(2,1,1); hold on;
-% plot(t_val, theta_val);
-% plot(t_val, simdata_val(:,1));
-% xlim([0,112])
-% xlabel('$t$ (s)', "Interpreter","latex","FontSize",15);
-% ylabel('$\theta$ (rad)', "Interpreter","latex","FontSize",15)
-% legend("Validation data", "Simulation data","Location","northwest","Orientation",	"horizontal","FontSize",6)
-% 
-% subplot(2,1,2); hold on;
-% plot(t_val, phi_dot_val);
-% plot(t_val, simdata_val(:,2));
-% xlim([0,112])
-% xlabel('$t$ (s)', "Interpreter","latex","FontSize",15);
-% ylabel('$\dot \phi$ (rad)', "Interpreter","latex","FontSize",15)
-% legend("Validation data", "Simulation data","Location","northwest","Orientation",	"horizontal","FontSize",6)
-% 
-% sgtitle("PRBS validation data and model prediction")
-% exportgraphics(gcf,'0 - Figures Coen\PRBS validation data and model prediction.pdf')
+figure(); 
+subplot(2,1,1); hold on;
+plot(t_val, theta_val);
+plot(t_val, simdata_val(:,1));
+xlim([0,112])
+xlabel('$t$ (s)', "Interpreter","latex","FontSize",15);
+ylabel('$\theta$ (rad)', "Interpreter","latex","FontSize",15)
+legend("Validation data", "Simulation data","Location","northwest","Orientation",	"horizontal","FontSize",6)
+
+subplot(2,1,2); hold on;
+plot(t_val, phi_dot_val);
+plot(t_val, simdata_val(:,2));
+xlim([0,112])
+xlabel('$t$ (s)', "Interpreter","latex","FontSize",15);
+ylabel('$\dot \phi$ (rad)', "Interpreter","latex","FontSize",15)
+legend("Validation data", "Simulation data","Location","northwest","Orientation",	"horizontal","FontSize",6)
+
+sgtitle("PRBS validation data and model prediction")
+exportgraphics(gcf,'0 - Figures Liam\nonlinear_greyest_validation.pdf')
 
 
 % Format the results and save them
