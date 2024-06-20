@@ -30,3 +30,21 @@ Simulink file: `7 - Non-Linear Model/NL_MPC_controller.slx`
 Initialization file: `8 - Swing-up/swingup_mpc_init.m`
 
 Simulink file: `8 - Swing-up/swingup_MPC_controller.slx`
+
+
+## Datafiles
+
+The data for the system identification can be found under:
+
+`0 - Data/cut_data_cal/` (data for simple pendulum and flywheel test)
+
+`0 - Data/sysid_data_cal/` (data for full greybox estimation)
+
+
+The data for the controller plots can be found under:
+
+`0 - Data/control_data/` (LQR and MPC)
+
+`0 - Data/NLMPC/` (Nonlinear MPC)
+
+`0 - Data/Swingup/` (Swingup MPC)
